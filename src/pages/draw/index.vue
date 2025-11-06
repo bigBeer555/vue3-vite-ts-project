@@ -1,0 +1,181 @@
+<template>
+  <!-- 预加载视频 -->
+  <!-- <SmartVideo width="600" height="300" src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4?token=9d2f8b10d41e486b85a7ff4e78a99b62&expires=1893475200&user=demo_user_id_1234567890_long_path_example/video_assets/movies/BigBuckBunny720p_full_quality_with_audio_and_subtitles.mp4" /> -->
+  <!-- <SmartVideo2></SmartVideo2> -->
+  <el-button @click="showModal">展示</el-button>
+  <Canvas></Canvas>
+
+  <!-- 刮刮乐 -->
+  <!-- <Ccrape /> -->
+
+
+  <!-- 刮奖 -->
+   <!-- <div class="draw-tools">
+    <div class="draw-tools-item">
+      <el-button @click="clearCanvas">清除</el-button>
+      <el-input type="number" v-model="lineWidth" placeholder="请输入线宽" style="width: 100px;"></el-input>
+    </div>
+    <div class="draw-color">
+      <el-button v-for="c in lineColorOptions" :style="{backgroundColor: c,border: `1px solid ${c}`,marginLeft: '4px' }" @click="lineColor = c"></el-button>
+    </div>
+  </div>
+  <div class="canvas-container"></div>
+  <div class="ignore-draw-container">
+    <canvas 
+      ref="canvasRef"
+      width="600"
+      height="300"
+      @mousedown="handleMouseDown"
+      @mousemove="handleMouseMove"
+      @mouseup="handleMouseUp"
+      @touchstart.prevent="handleMouseDown"
+      @touchmove.prevent="handleMouseMove"
+      @touchend.prevent="handleMouseUp"
+      >
+      </canvas>
+  </div> -->
+  
+</template>
+
+<script lang="ts" setup>
+import { onMounted, ref } from "vue";
+import Canvas from '@/components/dialogs/Canvas/Canvas.vue'
+// import SmartVideo from '@/components/SmartVideo/index.vue'
+import SmartVideo2 from '@/components/SmartVideo/hand.vue'
+import { useDialog } from '@/utils/dialog'
+
+import { ElButton } from 'element-plus';
+import Ccrape from '@/components/Ccrape/index.vue'
+
+interface Pos {
+  x: number | null;
+  y: number | null;
+}
+const canvasRef = ref<HTMLCanvasElement | null>(null);
+const startDraw = ref<boolean>(false);
+const lineWidth = ref<number>(5);
+const lineColor = ref<string>('black');
+
+const lineColorOptions = ref<string[]>([
+  'black',
+  'red',
+  'green',
+  'blue',
+  'yellow',
+  'orange',
+  'purple',
+  'cyan',
+  'magenta',
+  'brown',
+  'gray',
+  'white',
+])
+
+
+
+let ctx: CanvasRenderingContext2D | null = null;
+onMounted(() => {
+  if (!canvasRef.value) return;
+  ctx = canvasRef.value.getContext('2d');
+
+  // 如果按住超出Canvas范围就停止绘画
+  canvasRef.value.addEventListener('mouseleave', handleMouseUp)
+})
+
+
+
+const clearCanvas = () => {
+  if (!canvasRef.value || !ctx) return;
+  ctx.clearRect(0, 0, canvasRef.value.width, canvasRef.value.height);
+}
+
+const showModal = () => {
+  console.log(Canvas,'Canvas')
+  // const dialog3 = useDialog('Canvas', {
+  //     closed: true,
+  //     destroyed: true,
+  // })
+  // dialog3.show({
+  //   title:'弹窗3',
+  //   message:"这是第三个弹窗，关闭后不销毁 DOM"
+  // })
+}
+
+// 相对计算
+const getPos = (e: MouseEvent | TouchEvent):Pos|undefined  => {
+  if (!canvasRef.value) return;
+  const c = canvasRef.value!
+  const rect  = c.getBoundingClientRect()
+
+  if (e instanceof MouseEvent) {
+    return { x: e.clientX - rect.left, y: e.clientY - rect.top }
+  } else {
+    const touch = e.touches[0] || e.changedTouches[0]
+    if (!touch) return
+    return { x: touch.clientX - rect.left, y: touch.clientY - rect.top }
+  }
+}
+
+// 按下
+const handleMouseDown = (e: MouseEvent | TouchEvent) => {
+  console.log(ctx,'ctx')
+  if (!canvasRef.value || !ctx) return;
+  startDraw.value = true;
+  const pos = getPos(e)
+  ctx?.beginPath();
+  ctx?.moveTo(pos?.x as number, pos?.y as number);
+}
+
+// 移动
+const handleMouseMove = (e: MouseEvent | TouchEvent) => {
+  if (!canvasRef.value || !ctx) return;
+  if (!startDraw.value) return;
+  const pos = getPos(e)
+
+  ctx.strokeStyle = lineColor.value;
+  ctx.lineWidth = lineWidth.value;
+  ctx?.lineTo(pos?.x as number, pos?.y as number);
+  ctx?.stroke();
+}
+
+// 松开
+const handleMouseUp = (e: MouseEvent | TouchEvent) => {
+  if (!canvasRef.value || !ctx) return;
+  // ctx.closePath();
+  startDraw.value = false;
+}
+</script>
+
+<style scoped>
+  .draw-tools {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .draw-tools-item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+  }
+  .draw-color {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+  .canvas-container {
+    width: 150px;
+    height: 100px;
+    border: 1px solid #000;
+  }
+  .ignore-draw-container {
+    display:block;
+    width:600px;  /* CSS 尺寸（与 canvas 的 width/height 属性同步） */
+    height:300px;
+    background:white;
+    border:1px solid #e2e8f0;
+    touch-action: none; /* 阻止触摸滚动，直接用于绘制 */
+  }
+</style>
