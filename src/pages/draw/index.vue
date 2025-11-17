@@ -1,9 +1,10 @@
 <template>
   <!-- 预加载视频 -->
   <!-- <SmartVideo width="600" height="300" src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4?token=9d2f8b10d41e486b85a7ff4e78a99b62&expires=1893475200&user=demo_user_id_1234567890_long_path_example/video_assets/movies/BigBuckBunny720p_full_quality_with_audio_and_subtitles.mp4" /> -->
-  <!-- <SmartVideo2></SmartVideo2> -->
+  <HandVideo></HandVideo>
+   <!-- <flowVideo></flowVideo> -->
   <el-button @click="showModal">展示</el-button>
-  <Canvas></Canvas>
+  <el-button @click="closeModal">关闭</el-button>
 
   <!-- 刮刮乐 -->
   <!-- <Ccrape /> -->
@@ -39,11 +40,10 @@
 
 <script lang="ts" setup>
 import { onMounted, ref } from "vue";
-import Canvas from '@/components/dialogs/Canvas/Canvas.vue'
 // import SmartVideo from '@/components/SmartVideo/index.vue'
-import SmartVideo2 from '@/components/SmartVideo/hand.vue'
-import { useDialog } from '@/utils/dialog'
-
+import HandVideo from '@/components/SmartVideo/hand.vue'
+import { DialogType, useDialog } from '@/hooks/dialog'
+import flowVideo from '@/components/SmartVideo/flow.vue'
 import { ElButton } from 'element-plus';
 import Ccrape from '@/components/Ccrape/index.vue'
 
@@ -51,6 +51,13 @@ interface Pos {
   x: number | null;
   y: number | null;
 }
+const { id, opened } = useDialog(DialogType.Alert, {
+  title: '提示',
+  appendToBody: false,
+  message: '这是一个提示弹窗',
+})
+
+
 const canvasRef = ref<HTMLCanvasElement | null>(null);
 const startDraw = ref<boolean>(false);
 const lineWidth = ref<number>(5);
@@ -90,15 +97,11 @@ const clearCanvas = () => {
 }
 
 const showModal = () => {
-  console.log(Canvas,'Canvas')
-  // const dialog3 = useDialog('Canvas', {
-  //     closed: true,
-  //     destroyed: true,
-  // })
-  // dialog3.show({
-  //   title:'弹窗3',
-  //   message:"这是第三个弹窗，关闭后不销毁 DOM"
-  // })
+  opened.value = true
+}
+
+const closeModal = () => {
+  opened.value = false
 }
 
 // 相对计算

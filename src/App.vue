@@ -61,12 +61,12 @@ html, body {
 }
 
 #app {
-  min-height: 100vh;
+  // min-height: 100vh;
 }
 
 .outside {
-  color: aqua;
-  min-height: 100vh;
+  // color: aqua;
+  // min-height: 100vh;
   .inside {
       color: #1a1a1a;
   }

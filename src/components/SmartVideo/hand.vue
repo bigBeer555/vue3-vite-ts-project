@@ -1,66 +1,71 @@
 <template>
-  <div>
-    <video width="400" controls ref="videoRef"></video>
-    <ElButton type="primary" @click="handlePlay">播放并缓存 ({{ progress }}%)</ElButton>
+  <div class="video-player">
+    <video
+      ref="video"
+      controls
+      class="w-full"
+      style="max-width: 600px;"
+    ></video>
+    <div v-if="progress < 100">缓存进度：{{ progress.toFixed(1) }}%</div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+  import { ref, onMounted } from 'vue'
 
-const videoRef = ref<HTMLVideoElement | null>(null)
-const progress = ref<number>(0)
-
-const videoUrl = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'
-
-const handlePlay = async () => {
-  const cache = await caches.open('video-stream-cache')
-  const cacheKey = videoUrl
-
-  // 检查缓存是否已有视频
-  const cached = await cache.match(cacheKey)
-  if (cached) {
-    console.log('从缓存播放 ✅')
-    const blob = await cached.blob()
-    videoRef.value!.src = URL.createObjectURL(blob)
-    videoRef.value!.play()
-    return
-  }
-
-  console.log('开始边播边缓存...')
-  const response = await fetch(videoUrl)
-
-  // 获取可读流
-  const reader = response.body?.getReader()
-  const contentLength = Number(response.headers.get('Content-Length')) || 0
-  let received = 0
-
-  // 用于缓存的流副本
-  const stream = new ReadableStream({
-    async start(controller) {
-      while (true) {
-        const { done, value } = await reader!.read()
-        if (done) break
-        controller.enqueue(value)
-        received += value.length
-        progress.value = Math.floor((received / contentLength) * 100)
-      }
-      controller.close()
-      console.log('缓存流读取完毕 ✅')
+  const progress = ref<number>(0)
+  const videoRef = ref<HTMLVideoElement | null>(null)
+  const videoUrl = ref<string>('')
+  const playVideo = async() => {
+    const video = videoRef.value
+    if (!video) return
+    const cache = await caches.open('video-cache-hand')
+    const cached = await cache.match(videoUrl.value)
+    if (cached) {
+      const blob = await cached.blob()
+      video.src = URL.createObjectURL(blob)
+      video.play()
+      return
     }
-  })
 
-  // 用流生成 Response，一边播放一边缓存
-  const responseForCache = new Response(stream, {
-    headers: { 'Content-Type': 'video/mp4' }
-  })
+    // 2) 正常网络播放，确保用户体验
+    video.src = videoUrl.value
+    try { await video.play() } catch {}
 
-  // 把一份复制的流交给 video 播放
-  const responseForVideo = response.clone()
-  videoRef.value!.src = URL.createObjectURL(await responseForVideo.blob())
-  videoRef.value!.play()
-
-  // 把流存入浏览器 Cache
-  cache.put(cacheKey, responseForCache)
-}
+    // 3) 后台边缓存：把网络响应体复制到 CacheStorage
+    try {
+      const res = await fetch(videoUrl.value)
+      const reader = res.body?.getReader()
+      const total = Number(res.headers.get('Content-Length')) || 0
+      let received = 0
+      const stream = new ReadableStream({
+        async start(controller) {
+          if (!reader) {
+            await cache.put(videoUrl.value, res.clone())
+            controller.close()
+            // 缓存完成后，无缝切换到缓存源并保留进度
+            const keepTime = video.currentTime
+            const keepPaused = video.paused
+            const saved = await cache.match(videoUrl.value)
+            if (saved) {
+              const blob = await saved.blob()
+              const obj = URL.createObjectURL(blob)
+              video.src = obj
+              video.currentTime = keepTime
+              video.paused = keepPaused
+            }
+          }
+        }
+      })
+    } catch {}
+  }
 </script>
+
+<style scoped>
+.video-player {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+</style>
