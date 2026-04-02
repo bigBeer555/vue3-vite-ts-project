@@ -122,12 +122,20 @@
         </div>
         <div class="header-right">
           <div class="header-actions">
+            <!-- AI Chat Component -->
+            <AiChat />
+            
             <button class="action-btn" @click="toggleTheme">
               <svg viewBox="0 0 24 24" fill="currentColor">
                 <path d="M7.5,2C5.71,3.15 4.5,5.18 4.5,7.5C4.5,9.82 5.71,11.85 7.53,13C4.46,13 2,10.54 2,7.5A5.5,5.5 0 0,1 7.5,2M19.07,3.5L20.5,4.93L4.93,20.5L3.5,19.07L19.07,3.5M12.89,5.93L11.41,5L9.97,6L10.39,4.3L9,3.24L10.75,3.12L11.33,1.47L12,3.1L13.73,3.13L12.38,4.26L12.89,5.93M9.59,9.54L8.43,8.81L7.31,9.59L7.65,8.27L6.56,7.44L7.92,7.35L8.37,6.06L8.88,7.33L10.24,7.36L9.19,8.23L9.59,9.54M19,13.5A5.5,5.5 0 0,1 13.5,19C12.28,19 11.15,18.6 10.24,17.93L17.93,10.24C18.6,11.15 19,12.28 19,13.5Z" />
               </svg>
             </button>
-            <button class="action-btn" @click="showNotifications">
+            <button class="action-btn" @click="jumpTo('customer')">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M7.5,2C5.71,3.15 4.5,5.18 4.5,7.5C4.5,9.82 5.71,11.85 7.53,13C4.46,13 2,10.54 2,7.5A5.5,5.5 0 0,1 7.5,2M19.07,3.5L20.5,4.93L4.93,20.5L3.5,19.07L19.07,3.5M12.89,5.93L11.41,5L9.97,6L10.39,4.3L9,3.24L10.75,3.12L11.33,1.47L12,3.1L13.73,3.13L12.38,4.26L12.89,5.93M9.59,9.54L8.43,8.81L7.31,9.59L7.65,8.27L6.56,7.44L7.92,7.35L8.37,6.06L8.88,7.33L10.24,7.36L9.19,8.23L9.59,9.54M19,13.5A5.5,5.5 0 0,1 13.5,19C12.28,19 11.15,18.6 10.24,17.93L17.93,10.24C18.6,11.15 19,12.28 19,13.5Z" />
+              </svg>
+            </button>
+            <button class="action-btn" @click="jumpTo('messages')">
               <svg viewBox="0 0 24 24" fill="currentColor">
                 <path d="M21,19V20H3V19L5,17V11C5,7.9 7.03,5.17 10,4.29C10,4.19 10,4.1 10,4A2,2 0 0,1 12,2A2,2 0 0,1 14,4C14,4.1 14,4.19 14,4.29C16.97,5.17 19,7.9 19,11V17L21,19M14,21A2,2 0 0,1 12,23A2,2 0 0,1 10,21" />
               </svg>
@@ -294,7 +302,7 @@
 
           <!-- 画布 -->
           <div class="canvas-section">
-            <SignCanvas title="明华" />
+            <!-- <SignCanvas title="明华" /> -->
           </div>
           
           <!-- 测试滚动内容 -->
@@ -349,11 +357,14 @@
  脚本
 -->
 <script setup lang="ts">
-import { ref, onMounted, reactive } from 'vue'
+import { ref, onMounted, onActivated, reactive } from 'vue'
 import { useRouter } from 'vue-router'
+import AiChat from '@/components/AiChat/index.vue'
 import request from '@/utils/request'
 import { debounce } from '@/utils/debounce'
-import SignCanvas from '@/components/Canvas/index.vue'
+import { eventBus } from '@/utils/evenBus'
+
+// import SignCanvas from '@/components/Canvas/index.vue'
 
 
 const router = useRouter()
@@ -407,7 +418,7 @@ const stats = ref<Activity[]>([
     value: '12,345',
     change: '+12.5%',
     trend: 'up',
-    color: 'linear-gradient(45deg, #00d4ff, #0099cc)',
+    color: 'linear-gradient(45deg, #6366f1, #4f46e5)', // Indigo
     icon: '<path d="M16,4C18.11,4 19.8,5.69 19.8,7.8C19.8,9.91 18.11,11.6 16,11.6C13.89,11.6 12.2,9.91 12.2,7.8C12.2,5.69 13.89,4 16,4M16,13.4C18.67,13.4 24,14.73 24,17.4V20H8V17.4C8,14.73 13.33,13.4 16,13.4Z" />'
   },
   {
@@ -416,7 +427,7 @@ const stats = ref<Activity[]>([
     value: '8,967',
     change: '+8.2%',
     trend: 'up',
-    color: 'linear-gradient(45deg, #ff6b35, #ff8c42)',
+    color: 'linear-gradient(45deg, #ec4899, #db2777)', // Pink
     icon: '<path d="M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17M12,4.5C7,4.5 2.73,7.61 1,12C2.73,16.39 7,19.5 12,19.5C17,19.5 21.27,16.39 23,12C21.27,7.61 17,4.5 12,4.5Z" />'
   },
   {
@@ -425,7 +436,7 @@ const stats = ref<Activity[]>([
     value: '67%',
     change: '-3.1%',
     trend: 'down',
-    color: 'linear-gradient(45deg, #4ecdc4, #44a08d)',
+    color: 'linear-gradient(45deg, #8b5cf6, #7c3aed)', // Violet
     icon: '<path d="M13,2.05V5.08C16.39,5.57 19,8.47 19,12C19,12.9 18.82,13.75 18.5,14.54L21.12,16.07C21.68,14.83 22,13.45 22,12C22,6.82 18.05,2.55 13,2.05M12,19C8.47,19 5.57,16.39 5.08,13H2.05C2.55,18.05 6.82,22 12,22C13.45,22 14.83,21.68 16.07,21.12L14.54,18.5C13.75,18.82 12.9,19 12,19M2.05,11H5.08C5.57,7.61 8.47,5 12,5C12.9,5 13.75,5.18 14.54,5.5L16.07,2.88C14.83,2.32 13.45,2 12,2C6.82,2 2.55,6.05 2.05,11Z" />'
   },
   {
@@ -434,7 +445,7 @@ const stats = ref<Activity[]>([
     value: '¥45,678',
     change: '+15.3%',
     trend: 'up',
-    color: 'linear-gradient(45deg, #a8edea, #fed6e3)',
+    color: 'linear-gradient(45deg, #06b6d4, #0891b2)', // Cyan
     icon: '<path d="M7,15H9C9,16.08 10.37,17 12,17C13.63,17 15,16.08 15,15C15,13.9 13.96,13.5 11.76,12.97C9.64,12.44 7,11.78 7,9C7,7.21 8.47,5.69 10.5,5.18V3H13.5V5.18C15.53,5.69 17,7.21 17,9H15C15,7.92 13.63,7 12,7C10.37,7 9,7.92 9,9C9,10.1 10.04,10.5 12.24,11.03C14.36,11.56 17,12.22 17,15C17,16.79 15.53,18.31 13.5,18.82V21H10.5V18.82C8.47,18.31 7,16.79 7,15Z" />'
   }
 ])
@@ -516,12 +527,11 @@ const getPageTitle = () => {
 }
 
 const toggleTheme = () => {
-  console.log('切换主题')
+  router.push('/draw')
 }
 
-const showNotifications = () => {
-  console.log(router,'router')
-  router.push('/messages')
+const jumpTo = (type: string) => {
+  router.push(`/${type}`)
 }
 
 const handleLogout = () => {
@@ -563,7 +573,11 @@ function getList() {
     console.error('请求失败:', err)
   })
 }
-
+onActivated(() => {
+  eventBus.onOpenPreview((isShow) => {
+    console.log('onOpenPreview', isShow)
+  })
+})
 // 组件挂载
 onMounted(() => {
   console.log('Dashboard mounted')
@@ -579,15 +593,15 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 // 全局变量
-$primary-color: #00d4ff;
-$secondary-color: #0099cc;
-$accent-color: #ff6b35;
-$bg-dark: #0a0a0a;
-$bg-darker: #050505;
-$text-light: #ffffff;
-$text-muted: #888888;
-$glass-bg: rgba(255, 255, 255, 0.05);
-$glass-border: rgba(255, 255, 255, 0.1);
+$primary-color: #6366f1; // Indigo
+$secondary-color: #8b5cf6; // Violet
+$accent-color: #ec4899; // Pink
+$bg-dark: #0f172a; // Slate-900
+$bg-darker: #020617; // Slate-950
+$text-light: #f8fafc; // Slate-50
+$text-muted: #94a3b8; // Slate-400
+$glass-bg: rgba(30, 41, 59, 0.7); // Darker glass to match login
+$glass-border: rgba(255, 255, 255, 0.08);
 $sidebar-width: 280px;
 $sidebar-collapsed-width: 70px;
 $header-height: 70px;
@@ -599,20 +613,57 @@ $header-height: 70px;
   min-height: 100vh;
   overflow-x: hidden;
   overflow-y: auto;
-  background: linear-gradient(135deg, $bg-darker 0%, $bg-dark 50%, #1a1a2e 100%);
-  font-family: 'Arial', sans-serif;
+  background: $bg-dark; // Solid background like login
+  color: $text-light;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; // Match login font
 }
 
 // 动态背景
 .background {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 1;
-  
-  .stars {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    overflow: hidden; // Ensure orbs don't cause scrollbars
+    
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.4; // Slightly lower opacity for dashboard content readability
+      animation: float-orb 20s infinite ease-in-out;
+      z-index: 0;
+    }
+
+    .orb-1 {
+      width: 400px;
+      height: 400px;
+      background: #4f46e5; // Indigo-600
+      top: -100px;
+      left: -100px;
+    }
+
+    .orb-2 {
+      width: 500px;
+      height: 500px;
+      background: #7c3aed; // Violet-600
+      bottom: -100px;
+      right: -100px;
+      animation-delay: -5s;
+    }
+
+    .orb-3 {
+      width: 300px;
+      height: 300px;
+      background: #ec4899; // Pink-500
+      top: 40%;
+      left: 40%;
+      animation-delay: -10s;
+    }
+
+    .stars {
     position: absolute;
     width: 100%;
     height: 100%;
@@ -651,6 +702,18 @@ $header-height: 70px;
       animation: float 8s ease-in-out infinite;
     }
   }
+}
+
+@keyframes float-orb {
+  0%, 100% { transform: translate(0, 0); }
+  33% { transform: translate(30px, -50px); }
+  66% { transform: translate(-20px, 20px); }
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+  100% { transform: translateY(0px); }
 }
 
 // 侧边栏

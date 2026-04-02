@@ -180,17 +180,21 @@ class TaskQueueManager {
 
   private _bubbleUp = (index: number) => {
     const parentIndex = Math.floor((index - 1) / 2)
-    if (parentIndex >= 0 && this.tasks[index].options.priority < this.tasks[parentIndex].options.priority) {
-      [this.tasks[index], this.tasks[parentIndex]] = [this.tasks[parentIndex], this.tasks[index]]
+    const current = this.tasks[index]
+    const parent = this.tasks[parentIndex]
+    if (!current || !parent) return
+    if (parentIndex >= 0 && current.options.priority < parent.options.priority) {
+      ;[this.tasks[index], this.tasks[parentIndex]] = [parent, current]
       this._bubbleUp(parentIndex)
     }
   }
 
   // 提取任务
-  private popTask = () => {
+  private popTask = (): Task | undefined => {
     const task = this.tasks[0]
+    if (!task) return
     const lastTask = this.tasks.pop()
-    if (lastTask) {
+    if (lastTask && this.tasks.length > 0) {
       this.tasks[0] = lastTask
       this._sinkDown(0)
     }
@@ -201,14 +205,25 @@ class TaskQueueManager {
     const leftChildIndex = 2 * index + 1
     const rightChildIndex = 2 * index + 2
     let smallestIndex = index
-    if (leftChildIndex < this.tasks.length && this.tasks[leftChildIndex].options.priority < this.tasks[smallestIndex].options.priority) {
+    const current = this.tasks[index]
+    if (!current) return
+    const smallest = this.tasks[smallestIndex]
+    if (!smallest) return
+    const left = this.tasks[leftChildIndex]
+    const right = this.tasks[rightChildIndex]
+    if (leftChildIndex < this.tasks.length && left && left.options.priority < smallest.options.priority) {
       smallestIndex = leftChildIndex
     }
-    if (rightChildIndex < this.tasks.length && this.tasks[rightChildIndex].options.priority < this.tasks[smallestIndex].options.priority) {
+    const smallest2 = this.tasks[smallestIndex]
+    if (!smallest2) return
+    if (rightChildIndex < this.tasks.length && right && right.options.priority < smallest2.options.priority) {
       smallestIndex = rightChildIndex
     }
     if (smallestIndex !== index) {
-      [this.tasks[index], this.tasks[smallestIndex]] = [this.tasks[smallestIndex], this.tasks[index]]
+      const a = this.tasks[index]
+      const b = this.tasks[smallestIndex]
+      if (!a || !b) return
+      ;[this.tasks[index], this.tasks[smallestIndex]] = [b, a]
       this._sinkDown(smallestIndex)
     }
   }
@@ -252,6 +267,7 @@ class TaskQueueManager {
   processTask = () => {
     if (this.tasks.length === 0) return
     const task = this.popTask()
+    if (!task) return
     // 非最高级别任务
     if (task.options.priority !== TaskPriority.Urgent && this.runningCount >= TaskQueueManager.defaultConcurrency) return
     this.runningCount ++

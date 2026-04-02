@@ -170,13 +170,16 @@ class TaskQueueManager {
     if (index === 0) return
 
     const parent = Math.floor((index - 1) / 2)
+    const currentTask = this.tasks[index]
+    const parentTask = this.tasks[parent]
+    if (!currentTask || !parentTask) return
 
     if (
-      this.tasks[index].options.priority < this.tasks[parent].options.priority
+      currentTask.options.priority < parentTask.options.priority
     ) {
       ;[this.tasks[index], this.tasks[parent]] = [
-        this.tasks[parent],
-        this.tasks[index]
+        parentTask,
+        currentTask
       ]
       this._bubbleUp(parent)
     }
@@ -185,10 +188,13 @@ class TaskQueueManager {
   // 提取任务
   private popTask = () => {
     const tasks = this.tasks
-    if (tasks.length === 1) return tasks.pop() as Task
+    if (tasks.length === 1) return tasks.pop()
+    if (tasks.length === 0) return
 
     const top = tasks[0]
-    tasks[0] = tasks.pop() as Task
+    const last = tasks.pop()
+    if (!top || !last) return top || last
+    tasks[0] = last
     this._sinkDown(0)
     return top
   }
@@ -203,21 +209,28 @@ class TaskQueueManager {
 
     if (
       left < length &&
+      tasks[left] &&
+      tasks[smallest] &&
       tasks[left].options.priority < tasks[smallest].options.priority
     ) {
       smallest = left
     }
     if (
       right < length &&
+      tasks[right] &&
+      tasks[smallest] &&
       tasks[right].options.priority < tasks[smallest].options.priority
     ) {
       smallest = right
     }
 
     if (smallest !== index) {
+      const a = tasks[index]
+      const b = tasks[smallest]
+      if (!a || !b) return
       ;[tasks[index], tasks[smallest]] = [
-        tasks[smallest],
-        tasks[index]
+        b,
+        a
       ]
       this._sinkDown(smallest)
     }
@@ -274,6 +287,7 @@ class TaskQueueManager {
   private processTask = () => {
     if (this.tasks.length === 0) return
     const task = this.popTask()
+    if (!task) return
     // 非最高级别任务并发数量达到限制则等待任务执行完毕后再进行下一次的任务处理
     const isLimited =
       task.options.priority !== TaskPriority.Urgent &&

@@ -1,8 +1,21 @@
-import { createWebHistory, createRouter,createWebHashHistory } from "vue-router";
+import { createRouter, createWebHashHistory } from "vue-router";
 
 const routes = [
-    {
+    { 
         path: '/', 
+        component: () => import('@/pages/login/index.vue'),
+        name: 'Login',
+        meta: {
+            title: '登录',
+            icon: 'login',
+            roles: ['admin', 'user'],
+            cache: false,
+            transition: 'gradient',
+            shaking: false,
+        }
+    },
+    {
+        path: '/draw', 
         component: () => import('@/pages/draw/index.vue'),
         name: 'Draw',
         meta: {
@@ -28,19 +41,6 @@ const routes = [
         }
     },
     { 
-        path: '/login', 
-        component: () => import('@/pages/login/index.vue'),
-        name: 'Login',
-        meta: {
-            title: '登录',
-            icon: 'login',
-            roles: ['admin', 'user'],
-            cache: false,
-            transition: 'gradient',
-            shaking: false,
-        }
-    },
-    { 
         path: '/index', 
         component: () => import('@/pages/index/index.vue'),  // 修复：添加import()
         name: 'Index',
@@ -49,6 +49,19 @@ const routes = [
             icon: 'home',
             roles: ['admin', 'user'],
             cache: true,
+            transition: 'fade',
+            shaking: false,
+        }
+    },
+    { 
+        path: '/customer', 
+        component: () => import('@/pages/customer/index.vue'), 
+        name: 'Customer',
+        meta: {
+            title: '客服',
+            icon: 'home',
+            roles: ['admin', 'user'],
+            cache: false,
             transition: 'fade',
             shaking: false,
         }

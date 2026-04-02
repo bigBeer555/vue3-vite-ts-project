@@ -14,7 +14,7 @@ module.exports = {
 
     'postcss-px-to-viewport-8-plugin': {
       unitToConvert: 'px',        // 要转换的单位
-      viewportWidth: 375,         // 设计稿宽度（一般 375 或 750）
+      viewportWidth: 1920,         // 设计稿宽度（一般 375 或 750）
       unitPrecision: 5,           // 转换后小数位
       propList: ['*'],            // 需要转换的属性，* 表示全部
       viewportUnit: 'vw',         // 转换成 vw
@@ -23,6 +23,7 @@ module.exports = {
       minPixelValue: 1,           // 小于或等于1px不转换
       mediaQuery: false,          // 不在媒体查询中转换
       replace: true,              // 是否直接替换
+      // exclude: [/node_modules/, /login/, /index/],  // 忽略文件
       exclude: [/node_modules/],  // 忽略文件
     },
   },

@@ -13,9 +13,6 @@ export default defineConfig({
     }),
     Components({
       resolvers: [ElementPlusResolver()],
-      // 禁用对本地 components 目录的扫描与自动注册，仅保留 Element Plus 解析
-      dirs: [],
-      dts: 'components.d.ts',
     }),
   ],
   css: {
@@ -27,15 +24,14 @@ export default defineConfig({
     },
   },
   server: {
-    port: 3030,
+    port: 3002, // 改为 3002，避开后端服务端口
     proxy: {
       '/api': {
-        target: 'http://localhost:3000',
+        target: 'http://localhost:3003',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, '')
       },
       '/upload': {
-        target: 'http://localhost:3000',
+        target: 'http://localhost:3003',
         changeOrigin: true,
       },
     },

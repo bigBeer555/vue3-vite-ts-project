@@ -11,14 +11,22 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    AiChat: typeof import('./src/components/AiChat/index.vue')['default']
+    Alert: typeof import('./src/components/Alert/index.vue')['default']
     Canvas: typeof import('./src/components/Canvas/index.vue')['default']
     Ccrape: typeof import('./src/components/Ccrape/index.vue')['default']
+    ElAvatar: typeof import('element-plus/es')['ElAvatar']
+    ElBadge: typeof import('element-plus/es')['ElBadge']
     ElButton: typeof import('element-plus/es')['ElButton']
+    ElEmpty: typeof import('element-plus/es')['ElEmpty']
     ElIcon: typeof import('element-plus/es')['ElIcon']
     ElInput: typeof import('element-plus/es')['ElInput']
+    ElTooltip: typeof import('element-plus/es')['ElTooltip']
     ElUpload: typeof import('element-plus/es')['ElUpload']
+    Flow: typeof import('./src/components/SmartVideo/flow.vue')['default']
     Hand: typeof import('./src/components/SmartVideo/hand.vue')['default']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
+    Min: typeof import('./src/components/SmartVideo/min.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Scrape: typeof import('./src/components/scrape/index.vue')['default']
