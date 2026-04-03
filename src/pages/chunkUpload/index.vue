@@ -117,6 +117,13 @@ const getFiles = async (filename: string) => {
     console.error('获取文件列表失败:', error);
   }
 };
+const beforeAvatarUpload = (file: File) => {
+  if (file.type !== 'image/jpeg') {
+    ElMessage.error('请上传 JPG 格式的图片!');
+    return false;
+  }
+  return true;
+};
 </script>
 
 <style scoped>

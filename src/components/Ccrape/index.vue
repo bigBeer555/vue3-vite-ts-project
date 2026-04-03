@@ -58,14 +58,14 @@ function getPos(e: MouseEvent | TouchEvent):Pos|undefined {
   }
 }
 
-function handleScratchStart(e: MouseEvent) {
+function handleScratchStart(e: MouseEvent | TouchEvent) {
   const pos = getPos(e)
   if (!pos || !ctx) return
   startDraw.value = true
   ctx.clearRect(pos.x as number, pos.y as number, 10, 10);
 }
 
-function handleScratch(e: MouseEvent) {
+function handleScratch(e: MouseEvent | TouchEvent) {
   if (!startDraw.value) return
   const pos = getPos(e)
   if (!pos || !ctx) return
@@ -77,11 +77,13 @@ function getScratchProgress() {
   if (!ctx || !canvasRef2.value) return 0;
   const { width, height } = canvasRef2.value;
   const imageData = ctx.getImageData(0, 0, width, height);
-  const data = imageData.data;
+  console.log(imageData.data,'imageData.dataimageData.data')
+  const data = imageData.data
   let transparent = 0;
 
   for (let i = 3; i < data.length; i += 4) {
-    if (data[i] <= 30) transparent++;
+    const alpha = data[i]
+    if (alpha !== undefined && alpha <= 30) transparent++;
   }
 
   return (transparent / (width * height)) * 100;

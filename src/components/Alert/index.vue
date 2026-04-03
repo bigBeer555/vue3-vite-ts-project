@@ -5,7 +5,7 @@ const props = defineProps<AlertProps & { opened: boolean }>()
 const emits = defineEmits(['update:opened'])
 
 const closeModal = () => {
-  props.opened = false
+  emits('update:opened', false)
 }
 </script>
 
