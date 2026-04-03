@@ -3,7 +3,7 @@ import type { AlertProps } from './types'
 
 const props = defineProps<AlertProps & { opened: boolean }>()
 const emits = defineEmits(['update:opened'])
-
+ 
 const closeModal = () => {
   emits('update:opened', false)
 }
