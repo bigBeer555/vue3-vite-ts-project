@@ -130,7 +130,8 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, nextTick, onMounted,onBeforeUnmount } from 'vue'
-import { Search, Picture, Folder, More, Star, Clock } from '@element-plus/icons-vue'
+import { Picture, Folder, More, Star, Clock } from '@element-plus/icons-vue'
+// @ts-ignore
 import ws from '@/ws'
 
 // --- 类型定义 ---
@@ -296,12 +297,13 @@ const formatTime = (timeStr: string) => {
 const shouldShowTime = (msg: Message, index: number) => {
   if (index === 0) return true
   const prevMsg = messageHistory.value[index - 1]
-  return msg.timestamp - prevMsg.timestamp > 5 * 60 * 1000
+  return prevMsg && msg.timestamp - prevMsg.timestamp > 5 * 60 * 1000
 }
 
 onMounted(() => {
   ws.onConnect()
-  if (userList.length > 0) selectUser(userList[0])
+  const first = userList[0]
+  if (first) selectUser(first)
 })
 onBeforeUnmount(() => {
   ws.closeConnection()

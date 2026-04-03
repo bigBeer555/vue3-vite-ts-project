@@ -71,10 +71,10 @@
 <script lang="ts" setup>
 import { onMounted, ref } from "vue";
 // import SmartVideo from '@/components/SmartVideo/index.vue'
-import HandVideo from '@/components/SmartVideo/hand.vue'
+// import HandVideo from '@/components/SmartVideo/hand.vue'
 import { DialogType, useDialog } from '@/hooks/dialog'
-import flowVideo from '@/components/SmartVideo/flow.vue'
-import { ElButton } from 'element-plus';
+// import flowVideo from '@/components/SmartVideo/flow.vue'
+// import { ElButton } from 'element-plus';
 import Ccrape from '@/components/Ccrape/index.vue'
 
 interface Pos {
@@ -84,9 +84,9 @@ interface Pos {
 const { id, opened } = useDialog(DialogType.Alert, {
   title: '提示',
   appendToBody: false,
-  message: '这是一个提示弹窗',
+  message: `这是一个提示弹窗`,
 })
-
+console.log(id,' id===')
 
 const canvasRef = ref<HTMLCanvasElement | null>(null);
 const startDraw = ref<boolean>(false);

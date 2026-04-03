@@ -36,7 +36,7 @@
 import { onMounted, ref } from "vue";
 import { ElMessage } from "element-plus";
 import request from "../../utils/request";
-import exampleImage from "@/assets/img/lg01.webp";
+// import exampleImage from "@/assets/img/lg01.webp";
 import bgImgSrc from "@/pages/static/img/lg01.webp";
 
 import type { UploadProps } from "element-plus";
@@ -59,6 +59,7 @@ onMounted(() => {
 const handleAvatarSuccess: UploadProps["onSuccess"] = (response, uploadFile) => {
   imageUrl.value = URL.createObjectURL(uploadFile.raw!);
   ElMessage.success("上传成功！");
+  console.log(response, 'response');
 };
 
 const handleAvatarError: UploadProps["onError"] = () => {
@@ -95,6 +96,7 @@ const customHttpRequest = async ({file}:{file:any}) => {
         },
       });
       const result = response.data;
+      console.log(result, 'result');
     } catch (error) {
       console.log(error,'errorerrorerror')
       console.error(`分片 ${i + 1}/${totalChunks} 上传失败:`, error);
