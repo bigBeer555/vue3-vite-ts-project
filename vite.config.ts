@@ -1,14 +1,16 @@
-import { defineConfig, type ConfigEnv } from 'vite'
-type Mode = 'production' | 'test' | 'default' 
-const configs: Record<Mode, string> = {
-  production: './vite.config.prod.ts',
-  default: './vite.config.test.ts',
-  test: './vite.config.test.ts',
+import { defineConfig, type ConfigEnv, type UserConfig } from 'vite'
+import prodConfig from './vite.config.prod'
+import testConfig from './vite.config.test'
+
+type Mode = 'production' | 'test' | 'default'
+const configs: Record<Mode, UserConfig> = {
+  production: prodConfig,
+  default: testConfig,
+  test: testConfig,
 }
-export default defineConfig(async (env: ConfigEnv) => {
-  const configPath = configs[env.mode as Mode] || configs.default
-  const configModule = await import(new URL(configPath, import.meta.url).href)
-  return configModule.default
+
+export default defineConfig((env: ConfigEnv) => {
+  return configs[env.mode as Mode] || configs.default
 })
 
 // export default defineConfig({
