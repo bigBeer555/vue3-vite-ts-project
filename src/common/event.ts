@@ -4,4 +4,4 @@ export const  EVENTS = {
    */
   OPEN_PREVIEW: 'open_preview',
   CLOSE_PREVIEW: 'close_preview',
-}
+} as const

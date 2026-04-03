@@ -1,7 +1,12 @@
 import mitt from 'mitt'
 import { EVENTS } from '../common/event'
 
-const emitter = mitt()
+type EventMap = {
+  [EVENTS.OPEN_PREVIEW]: boolean
+  [EVENTS.CLOSE_PREVIEW]: boolean
+}
+
+const emitter = mitt<EventMap>()
 
 export const eventBus = {
   openPreview(isShow: boolean) {
