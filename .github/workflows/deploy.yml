@@ -13,16 +13,17 @@ jobs:
       - name: 拉代码
         uses: actions/checkout@v3
 
+      - name: 安装 pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
       - name: Node环境
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: pnpm
-
-      - name: 安装 pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10
+          cache-dependency-path: pnpm-lock.yaml
 
       - name: 安装依赖
         run: pnpm install --frozen-lockfile
