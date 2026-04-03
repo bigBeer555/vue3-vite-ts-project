@@ -5,8 +5,10 @@ const configs: Record<Mode, string> = {
   default: './vite.config.test.ts',
   test: './vite.config.test.ts',
 }
-export default defineConfig((env: ConfigEnv) => {
-  return import(configs[env.mode as Mode] || configs.default)
+export default defineConfig(async (env: ConfigEnv) => {
+  const configPath = configs[env.mode as Mode] || configs.default
+  const configModule = await import(new URL(configPath, import.meta.url).href)
+  return configModule.default
 })
 
 // export default defineConfig({

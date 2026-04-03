@@ -13,7 +13,6 @@ declare module 'vue' {
   export interface GlobalComponents {
     AiChat: typeof import('./src/components/AiChat/index.vue')['default']
     Alert: typeof import('./src/components/Alert/index.vue')['default']
-    Canvas: typeof import('./src/components/Canvas/index.vue')['default']
     Ccrape: typeof import('./src/components/Ccrape/index.vue')['default']
     ElAvatar: typeof import('element-plus/es')['ElAvatar']
     ElBadge: typeof import('element-plus/es')['ElBadge']
@@ -29,7 +28,6 @@ declare module 'vue' {
     Min: typeof import('./src/components/SmartVideo/min.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
-    Scrape: typeof import('./src/components/scrape/index.vue')['default']
     SmartVideo: typeof import('./src/components/SmartVideo/index.vue')['default']
     StandardTable: typeof import('./src/components/StandardTable/index.vue')['default']
     Test: typeof import('./src/components/SmartVideo/test.vue')['default']
