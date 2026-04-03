@@ -211,7 +211,7 @@ class TaskQueueManager {
       left < length &&
       tasks[left] &&
       tasks[smallest] &&
-      tasks[left].options.priority < tasks[smallest].options.priority
+      tasks[left]!.options.priority < tasks[smallest]!.options.priority
     ) {
       smallest = left
     }
@@ -219,7 +219,7 @@ class TaskQueueManager {
       right < length &&
       tasks[right] &&
       tasks[smallest] &&
-      tasks[right].options.priority < tasks[smallest].options.priority
+      tasks[right]!.options.priority < tasks[smallest]!.options.priority
     ) {
       smallest = right
     }

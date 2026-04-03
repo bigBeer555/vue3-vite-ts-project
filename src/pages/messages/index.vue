@@ -31,6 +31,18 @@ const onTaskQueue = () => {
     })
 }
 
+// 建立连接
+const onConnect = () => {
+  if (ws.value) return
+  ws.value = new WebSocket('ws://localhost:8080')
+}
+
+// 发送消息
+const onSend = () => {
+  if (!ws.value) return
+  ws.value.send(inputValue.value)
+}
+
 
 
 // 页面卸载前关闭连接并清理心跳资源
